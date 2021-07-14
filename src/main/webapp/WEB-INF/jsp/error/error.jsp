@@ -9,6 +9,6 @@
 </head>
 <body>
 <h4>BAD REQUEST: ${errMsg}</h4>
-<h2 c:if=${errEx!=null}> ${errEx.getMessage()}</h2>
+<h2 c:if=${errEx!=null}>${errEx.getMessage()}</h2>
 </body>
 </html>
