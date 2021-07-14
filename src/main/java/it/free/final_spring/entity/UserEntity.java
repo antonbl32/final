@@ -2,6 +2,7 @@ package it.free.final_spring.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -17,7 +18,7 @@ import java.util.Set;
 @NamedEntityGraph(name = "user-note-graph",
         attributeNodes =@NamedAttributeNode("notes"))
 @Table(name = "user")
-public class UserEntity implements UserDetails {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,40 +28,19 @@ public class UserEntity implements UserDetails {
     private String password;
     @Column(name = "time_create", updatable = false)
     private LocalDateTime timeCreate;
-    @OneToMany(fetch = FetchType.LAZY,targetEntity = NoteEntity.class)
-    @JoinColumn(name = "note_id")
+    @OneToMany(fetch = FetchType.LAZY,targetEntity = NoteEntity.class,orphanRemoval = true)
+    @JoinColumn(name = "user_id")
     private List<NoteEntity> notes;
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role")
-    private Set<ERole> authorities;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "role")
+    private Role role;
 
     @PrePersist
-    public void setTimeCreate() {
+    public void setDefault() {
         this.timeCreate = LocalDateTime.now();
+        if(role==null){
+            role=Role.USER;
+        }
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

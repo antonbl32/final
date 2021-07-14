@@ -5,7 +5,6 @@ import it.free.final_spring.entity.UserEntity;
 import it.free.final_spring.exception.NotFoundUserException;
 import it.free.final_spring.mapper.MainMapper;
 import it.free.final_spring.service.UserService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -23,18 +22,21 @@ public class UserController {
         this.userService = userService;
         this.mapper = mapper;
     }
+
     @GetMapping("/all")
     public String getAllUsers(ModelMap model) {
         model.addAttribute("users", userService.findAll().stream()
                 .map(a -> mapper.getUserDTO(a)).collect(toList()));
         return "users";
     }
+
     @GetMapping("/add")
-    public String registerUser(Model model){
-        UserDTO userDTO=new UserDTO();
-        model.addAttribute("userDTO",userDTO);
+    public String registerUser(Model model) {
+        UserDTO userDTO = new UserDTO();
+        model.addAttribute("userDTO", userDTO);
         return "user";
     }
+
     @PostMapping()
     public String addUser(@ModelAttribute("userDTO") UserDTO user, Model model) {
         UserEntity userEntity = mapper.getUserEntity(user);
@@ -48,18 +50,28 @@ public class UserController {
         return "usernotes";
     }
 
+    @PostMapping("/{id}")
+    public String deleteById(@PathVariable(value = "id") String id, Model model) {
+        userService.deleteUser(Long.valueOf(id));
+        model.addAttribute("users", userService.findAll().stream()
+                .map(a -> mapper.getUserDTO(a)).collect(toList()));
+        return "users";
+    }
+
+
     @ExceptionHandler(NotFoundUserException.class)
     public ModelAndView handleCustomException(NotFoundUserException ex) {
         ModelAndView model = new ModelAndView("error/error");
         model.addObject("errMsg", ex.getMessage());
+        model.addObject("errEx", ex);
         return model;
     }
 
     @ExceptionHandler(Exception.class)
     public ModelAndView handleAllException(Exception ex) {
         ModelAndView model = new ModelAndView("error/error");
-        model.addObject("errMsg", this.getClass()+" BAD REQUEST. NOT FOUND ENDPOINT");
+        model.addObject("errMsg", this.getClass() + " BAD REQUEST. NOT FOUND ENDPOINT");
+        model.addObject("errEx", ex);
         return model;
     }
-
 }

@@ -6,11 +6,7 @@
 
     | &nbsp;
 
-    <a href="add"/>open notes</a>
-
-    | &nbsp;
-
-    <a href="del"/>delete user</a>
+    <a href="add"/>add user</a>
 
     | &nbsp;
 
