@@ -44,6 +44,13 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         return userRepository.save(userEntity);
     }
+
+    @Override
+    public UserEntity findByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(
+                ()-> new NotFoundUserException("user with username "+username+" not found"));
+    }
+
     public void deleteUser(Long id){
         Optional<UserEntity> userEntity= userRepository.findById(id);
         if(userEntity.isPresent()){

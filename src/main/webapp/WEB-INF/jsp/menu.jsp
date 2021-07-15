@@ -6,8 +6,13 @@
 
     | &nbsp;
 
-    <a href="add"/>add user</a>
+    <a href="admin"/>Admin users</a>
+    | &nbsp;
 
+    <a href="add"/>add user</a>
+    | &nbsp;
+
+    <a href="note"/>add note</a>
     | &nbsp;
 
     <a c:if="${pageContext.request.remoteUser!= null}" href="/logout">Logout</a>

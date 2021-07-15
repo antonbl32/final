@@ -22,6 +22,7 @@ public class ConfigSecurity extends WebSecurityConfigurerAdapter {
     public ConfigSecurity(@Qualifier("userDetailsServiceImpl") UserDetailsService userService) {
         this.userService = userService;
     }
+
     @Bean
     protected DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
@@ -38,15 +39,21 @@ public class ConfigSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
+                .antMatchers("/").hasAuthority(Permissions.USERS_READ.getPermission())
+                .antMatchers("/noteadd").hasAuthority(Permissions.USERS_READ.getPermission())
+                .antMatchers("/note").hasAuthority(Permissions.USERS_READ.getPermission())
                 .antMatchers("/all").hasAuthority(Permissions.USERS_READ.getPermission())
                 .antMatchers("/add").hasAuthority(Permissions.USERS_WRITE.getPermission())
                 .antMatchers("/users").hasAuthority(Permissions.USERS_READ.getPermission())
                 .antMatchers("/monitor/**").hasAuthority(Permissions.USERS_WRITE.getPermission())
-                .antMatchers(HttpMethod.DELETE,"/").hasAuthority(Permissions.USERS_WRITE.getPermission())
+                .antMatchers(HttpMethod.DELETE, "/").hasAuthority(Permissions.USERS_WRITE.getPermission())
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll()
                 .and()
-                .logout().permitAll();
+                .logout().clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll();
     }
 }

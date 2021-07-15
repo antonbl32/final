@@ -16,13 +16,20 @@
         <tr>
             <th>Id</th>
             <th>Username</th>
+            <th>Password</th>
             <th>Open notes</th>
+            <th>Delete user</th>
         </tr>
         <c:forEach  items="${users}" var ="user">
             <tr>
                 <td>${user.id}</td>
                 <td>${user.username}</td>
+                <td>${user.password}</td>
                 <td><a href="<c:url value="${user.id}"/>">open notes</a></td>
+                <td><form id="form1" action="/${user.id}" method="post">
+                <a href="javascript:" onclick="document.getElementById('form1').submit();">Delete user</a>
+                </form>
+                </td>
             </tr>
         </c:forEach>
     </table>

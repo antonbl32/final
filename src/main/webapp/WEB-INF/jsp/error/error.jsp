@@ -8,7 +8,7 @@
     <title>Error Page</title>
 </head>
 <body>
-<h4>BAD REQUEST: ${errMsg}</h4>
+<h4>BAD REQUEST: ${errMsg} ${errEx.getMessage()}</h4>
 <h2 c:if=${errEx!=null}>${errEx.getMessage()}</h2>
 </body>
 </html>
