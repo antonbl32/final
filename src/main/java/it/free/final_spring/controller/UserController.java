@@ -16,6 +16,9 @@ import java.security.Principal;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Controller for view with user details
+ */
 @Controller
 public class UserController {
     private UserService userService;

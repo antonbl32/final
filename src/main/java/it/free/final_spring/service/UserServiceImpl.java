@@ -61,11 +61,10 @@ public class UserServiceImpl implements UserService {
         noteEntity.setUserEntity(userEntity);
         noteRepository.save(noteEntity);
     }
-
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Override
     public void deleteUser(Long id){
         Optional<UserEntity> userEntity= userRepository.findById(id);
-        if(userEntity.isPresent()){
-            userRepository.delete(userEntity.get());
-        }
+        userEntity.ifPresent(entity -> userRepository.delete(entity));
     }
 }
