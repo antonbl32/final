@@ -1,7 +1,9 @@
 package it.free.final_spring.service;
 
+import it.free.final_spring.entity.NoteEntity;
 import it.free.final_spring.entity.UserEntity;
 import it.free.final_spring.exception.NotFoundUserException;
+import it.free.final_spring.repository.NoteRepository;
 import it.free.final_spring.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,11 +18,14 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
+    private NoteRepository noteRepository;
 
-    public UserServiceImpl(UserRepository userRepository,PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, NoteRepository noteRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder=passwordEncoder;
+        this.passwordEncoder = passwordEncoder;
+        this.noteRepository = noteRepository;
     }
+
     @Transactional(isolation = Isolation.READ_COMMITTED,readOnly = true)
     @Override
     public UserEntity findByIdWithNotes(Long id) {
@@ -44,11 +49,17 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         return userRepository.save(userEntity);
     }
-
+    @Transactional(isolation = Isolation.READ_COMMITTED,readOnly = true)
     @Override
     public UserEntity findByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(
                 ()-> new NotFoundUserException("user with username "+username+" not found"));
+    }
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Override
+    public void addNoteToUser(NoteEntity noteEntity, UserEntity userEntity) {
+        noteEntity.setUserEntity(userEntity);
+        noteRepository.save(noteEntity);
     }
 
     public void deleteUser(Long id){

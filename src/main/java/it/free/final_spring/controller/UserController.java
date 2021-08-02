@@ -39,21 +39,6 @@ public class UserController {
         return "hello";
     }
 
-    @GetMapping("/note")
-    public String addNote(Principal principal,Model model){
-        NoteEntity noteEntity=new NoteEntity();
-        noteEntity.setUserEntity(userService.findByUsername(principal.getName()));
-        model.addAttribute("note",noteEntity);
-        return "note";
-    }
-    @PostMapping("/noteadd")
-    public String saveNote(@ModelAttribute("note") NoteEntity noteEntity,Model model){
-        UserEntity userEntity= userService.findByIdWithNotes(noteEntity.getUserEntity().getId());
-        userEntity.getNotes().add(noteEntity);
-        userService.save(userEntity);
-        return "usernotes";
-    }
-
     @GetMapping("/all")
     public String getAllUsers(ModelMap model) {
         model.addAttribute("users", userService.findAll().stream()
@@ -69,10 +54,12 @@ public class UserController {
     }
 
     @PostMapping
-    public String addUser(@ModelAttribute("userDTO") UserDTO user, Model model) {
-        UserEntity userEntity = mapper.getUserEntity(user);
-        model.addAttribute("user", userService.save(userEntity));
-        return "users";
+    public String addUser(@ModelAttribute("userDTO") UserDTO user) {
+        if(user==null){
+            return "redirect:/";
+        }
+        userService.save(mapper.getUserEntity(user));
+        return "redirect:/all";
     }
 
     @GetMapping("{id}")
@@ -88,7 +75,6 @@ public class UserController {
                 .map(a -> mapper.getUserDTO(a)).collect(toList()));
         return "users";
     }
-
 
     @ExceptionHandler(NotFoundUserException.class)
     public ModelAndView handleCustomException(NotFoundUserException ex) {

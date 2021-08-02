@@ -10,7 +10,7 @@
 <jsp:include page="menu.jsp" flush="true"/>
 <br>
 <%--@elvariable id="note" type="it.free.final_spring.entity.NoteEntity"--%>
-<form:form action="/noteadd" modelAttribute="note" method="post" >
+<form:form action="/note" modelAttribute="note" method="post" >
     Note text <form:input path="name"/>
     <form:errors path="name"/>
     <br><br>

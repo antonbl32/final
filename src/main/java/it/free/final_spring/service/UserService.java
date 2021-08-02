@@ -1,5 +1,6 @@
 package it.free.final_spring.service;
 
+import it.free.final_spring.entity.NoteEntity;
 import it.free.final_spring.entity.UserEntity;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface UserService {
     void deleteUser(Long id);
 
     UserEntity findByUsername(String username);
+
+    void addNoteToUser(NoteEntity noteEntity, UserEntity userEntity);
 }
